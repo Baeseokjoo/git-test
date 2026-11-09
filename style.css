@@ -1,0 +1,203 @@
+/* ===== 기본 설정 ===== */
+:root {
+  --text: #1a1a1a;
+  --sub: #6b6b6b;
+  --bg: #ffffff;
+  --accent: #1a1a1a;
+  --gutter: clamp(20px, 5vw, 80px);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.7;
+  word-break: keep-all;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ===== [효과 3] 스크롤 진행률 프로그래스 바 ===== */
+/* 화면 상단에 고정, JS에서 scaleX 값을 0~1로 변경 */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center; /* 왼쪽에서 오른쪽으로 늘어남 */
+  z-index: 100;
+}
+
+/* ===== 히어로 섹션 ===== */
+.hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh; /* 모바일 주소창 높이 대응 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden; /* 패럴랙스 배경이 밖으로 보이지 않도록 */
+  color: #fff;
+}
+
+/* [효과 2] 패럴랙스 배경 : 위아래 여유분을 둬서 이동해도 빈 공간이 생기지 않게 함 */
+.hero-bg {
+  position: absolute;
+  top: -15%;
+  left: 0;
+  width: 100%;
+  height: 130%;
+  background: url("https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=2000&q=80&auto=format&fit=crop")
+    center / cover no-repeat;
+  will-change: transform; /* 부드러운 이동을 위한 GPU 가속 힌트 */
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.45));
+}
+
+.hero-content {
+  position: relative;
+  padding: 0 var(--gutter);
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 28px;
+}
+
+.hero p {
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  font-weight: 300;
+  opacity: 0.9;
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  translate: -50% 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* ===== 콘텐츠 섹션 ===== */
+.section {
+  padding: clamp(100px, 16vw, 200px) var(--gutter);
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  align-items: center;
+  gap: clamp(40px, 7vw, 100px);
+}
+
+/* 섹션2 : 이미지와 텍스트 좌우 반전 */
+.section.reverse .text {
+  order: 2;
+}
+
+.section h2 {
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+
+.section p {
+  font-size: clamp(1rem, 1.3vw, 1.125rem);
+  color: var(--sub);
+}
+
+.image {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.footer {
+  padding: 60px var(--gutter);
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--sub);
+  border-top: 1px solid #eee;
+}
+
+/* ===== [효과 1] 아래에서 위로 페이드 인 ===== */
+/* 초기 상태 : 투명 + 40px 아래에 위치 */
+.fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 화면에 들어오면 JS가 is-visible 클래스를 추가 → 제자리로 올라오며 나타남 */
+.fade-up.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 순차 등장을 위한 지연 시간 (제목 → 문장 → 이미지) */
+.delay-1 { transition-delay: 0.15s; }
+.delay-2 { transition-delay: 0.3s; }
+
+/* 움직임 줄이기 설정 사용자 배려 : 애니메이션 없이 바로 표시 */
+@media (prefers-reduced-motion: reduce) {
+  .fade-up {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ===== 반응형 (태블릿/모바일) ===== */
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr; /* 한 줄로 쌓기 */
+  }
+
+  /* 모바일에서는 항상 텍스트 → 이미지 순서 */
+  .section.reverse .text {
+    order: 0;
+  }
+
+  .image {
+    aspect-ratio: 4 / 3;
+  }
+
+  /* 좁은 화면에서는 줄바꿈 태그 무시하고 자연스럽게 흐르도록 */
+  .section p br {
+    display: none;
+  }
+}
